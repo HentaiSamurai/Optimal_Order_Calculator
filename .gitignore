@@ -34,3 +34,6 @@ __pycache__/
 
 # tokenをpushしたら危険
 bot/token.txt
+
+# sheetへのアクセスキー
+bot/Resources/Key/optimal-order-calculator-3e6b3fb3b701.json
