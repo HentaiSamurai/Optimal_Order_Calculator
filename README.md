@@ -8,6 +8,8 @@ Python 3.6.9
 ## 外部モジュール
 discord.py
 Pillow
+gspread
+oauth2client
 
 # 実行について
 $ python ./main.py

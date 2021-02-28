@@ -1,40 +1,55 @@
-import cv2
 from PIL import Image
-from io import BytesIO 
+import cv2
+import math
 import numpy as np
-import tempfile
-import requests
-import os
+import my_image
 
-# Web上の画像を読み込み
-def imread_web(url, timeout = 10):
-    res = requests.get(url, timeout=timeout)
-    img = None
+def template_matching(template, img):
+    template = my_image.ImageToArray(template)
+    img = my_image.ImageToArray(img)
 
-    if res.status_code != 200:
-        e = Exception("HTTP status: " + res.statsu_code)
-        raise e
+    # グレースケール化
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    content_type = res.headers["content-type"]
-    if 'image' not in content_type:
-        e = Exception("Content-Type: " + content_type)
-        raise e
+    threshold = 210
+    ret, template = cv2.threshold(template, threshold, 255, cv2.THRESH_BINARY)
+    ret, img = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
 
-    img = Image.open(BytesIO(res.content))
-    img = img.convert('RGB')
-    img = np.asarray(img)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    return img
+    detector = cv2.AKAZE_create()
+    
+    # 特徴量の検出と特徴量ベクトルの計算
+    kp1, des1 = detector.detectAndCompute(template, None)
+    kp2, des2 = detector.detectAndCompute(img, None)
 
-# 画像を表示
-def show(img):
-    cv2.imshow('sample', img)
+    template = cv2.drawKeypoints(template, kp1, None, flags=4)
+    img = cv2.drawKeypoints(img, kp2, None, flags=4)
+
+    # Brute-Force Matcherの生成
+    bf = cv2.BFMatcher()
+
+    # 特徴量ベクトル同士をBrute-Force＆KNNでマッチング
+    matches = bf.knnMatch(des1, des2, k=2)
+
+    # データを間引く
+    ratio = 0.2
+    good = []
+    for m, n in matches:
+        if m.distance < ratio * n.distance:
+            good.append([m])
+
+    result = cv2.drawMatchesKnn(template, kp1, img, kp2, good[:2], None, flags=2)
+
+    cv2.imshow('sample', result)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def main():
-    img = cv2.imread('D:\Sourcetree\Koshoka\Resources\Order\order_001.png')
-    show(img)
+    return
+
+def main():    
+    template = Image.open('../Resources/Order/3.png')
+    img = Image.open('../Resources/Test/test.png')
+    template_matching(template, img)
 
 if __name__ == "__main__":
     main()
