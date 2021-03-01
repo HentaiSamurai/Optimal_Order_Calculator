@@ -15,9 +15,12 @@ Python 3.6.9
 
 $ python ./main.py
 
-※実行するには、botディレクトリにtoken.txtを配置し、中にbotのトークンを記述してください。
+※実行するには、以下の設定が必要です
+- botディレクトリにtoken.txtを配置し、discord botのトークンを記述
+- botディレクトリにsheet.txtを配置し、スプレッドシートのアクセスキーを記述
+- bot/Keyディレクトリにgoogle sheet apiの秘密鍵jsonファイルを設置
 
-※現時点で、bot/Sourcesディレクトリ内で実行しないとtoken.txtを見つけられずerrorになります（修正方法要検討）
+※現時点で、bot/Sourcesディレクトリ内で実行しないとtoken.txt、sheet.txtを見つけられずerrorになります（修正方法要検討）
 
 # 現在使えるコマンド
 
