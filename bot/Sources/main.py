@@ -1,6 +1,8 @@
 import sys
 import discord
 import analysis
+import sheet
+import command
 
 client = discord.Client()
 
@@ -42,6 +44,16 @@ async def on_message(message):
 		await current_channel.send('はいはーい')
 		await client.logout()
 		await sys.exit()
+	elif message.content == '.add player':
+		user = message.author
+		command.add_player(user.id, user.display_name)
+		await current_channel.send("{} を登録したわ".format(user.display_name))
+	elif message.content == '.remove player':
+		user = message.author
+		if command.remove_player(user.id, user.display_name):
+			await current_channel.send("{} を削除したわ".format(user.display_name))
+		else:
+			await current_channel.send("{} は登録されてないわね".format(user.display_name))
 
 def get_token():
 	with open('../token.txt') as fp:
