@@ -34,3 +34,6 @@ __pycache__/
 
 # tokenをpushしたら危険
 bot/token.txt
+
+# build以下を無視
+optimal_order_calculator/build/
